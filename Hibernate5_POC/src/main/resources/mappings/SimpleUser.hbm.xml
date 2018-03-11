@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+     "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+    
+    <hibernate-mapping package="com.bac.orm.beans" default-access="field">
+    
+    <class name="SimpleUser" table="USERS" batch-size="10" dynamic-insert="true" dynamic-update="true" >
+    
+    <cache usage="read-write"/>
+    <!-- Common id property -->
+	<id name="id" type="string" column="USER_ID" >
+		<generator class="uuid"/>
+	</id>
+
+    <!-- A versioned entity 
+	<version name="version" column="OBJ_VERSION"/>-->
+
+	<property   name="firstname"
+				type="string"
+				column="FIRSTNAME"
+				length="50"
+				not-null="true"/>
+
+	<property   name="lastname"
+				type="string"
+				column="LASTNAME"
+				length="50"
+				not-null="true"/>
+
+	<!-- We don't change the username, so map it with update="false".
+		 This is an immutable property, it is also unique.
+		 If your DBMS supports regex functions, add this:
+		 check="REGEXP_LIKE(ENAME,'^[[:alpha:]]+$')"
+		 -->
+	<property   name="username"
+				type="string"
+				update="false">
+	    <column name="USERNAME"
+                length="16"
+                not-null="true"
+                unique="true"/>
+	</property>
+
+	<!-- Password is a keyword in some databases, so we quote it. In practice, rename it. -->
+	<property   name="password"
+				type="string"
+				column="USER_PASSWORD"
+				length="12"
+				not-null="true"/>
+
+	<property   name="email"
+				type="string"
+				column="EMAIL"
+				length="255"
+				not-null="true"/>
+				
+				
+	 <!-- The default billing strategy, may be null if no BillingDetails exist -->
+	<many-to-one name="defaultBillingDetails"
+				 class="BillingDetails"
+				 column="DEFAULT_BILLING_DETAILS_ID"
+				 not-null="false"
+				 foreign-key="FK_DEFAULT_BILLING_DETAILS_ID"
+				 fetch="select"/>
+	
+	<!-- Regular component mapping -->
+    <component name="homeAddress" class="Address">
+
+        <property   name="street"
+                    type="string"
+                    column="HOME_STREET"
+                    length="255"/>
+
+        <property   name="zipcode"
+                    type="string"
+                    column="HOME_ZIPCODE"
+                    length="16"/>
+
+        <property   name="city"
+                    type="string"
+                    column="HOME_CITY"
+                    length="255"/>
+    </component>
+    
+    <!-- A one-to-one shared primary key entity association -->
+    <one-to-one name="shippingAddress"
+                class="AddressEntity"
+                cascade="save-update"
+                fetch="select"/>
+                
+    <!-- Regular inverse one-to-many association with a set -->
+    <set name="billingDetails" cascade="save-update" lazy="false" inverse="true" fetch="select">
+        <key column="USER_ID" not-null="true"/>
+        <one-to-many class="BillingDetails"/>
+    </set>
+    
+     <!-- This inverse bag is efficient, it avoids initialization when the collection
+         is modified in the constructor of Item. -->
+    <bag name="itemsForSale" inverse="true" lazy="false" fetch="subselect">
+        <key column="SELLER_ID"/>
+        <one-to-many class="Item"/>
+         <!--<loader query-ref="loadItemsSoldByUser"/> Custom SQL! -->
+    </bag>     
+    
+    <!-- Mapping for the optional one-to-many association to bought items, across a join table -->
+    <set name="boughtItems" table="ITEM_BUYER" lazy="false" fetch="subselect">
+        <key column="USER_ID" foreign-key="FK_ITEM_BUYER_USER_ID"/>
+        <many-to-many class="Item"
+                      column="ITEM_ID"
+                      unique="true"
+                      foreign-key="FK_ITEM_BUYER_ITEM_ID"/>
+    </set>       
+    
+    <property   name="createdDate"
+				type="timestamp"
+				column="CREATED_ON"
+				length="20"
+				not-null="true"/>
+    
+    <property   name="admin"
+				type="string"
+				column="ADMIN"
+				length="2"
+				not-null="true"/>
+	
+	<property   name="active"
+				type="string"
+				column="ACTIVE"
+				length="2"
+				not-null="true"/>
+    
+    <!-- Example legacy mapping of a component to a separate table. -->
+    <join table="BILLING_ADDRESS" optional="true" fetch="select">
+        <key column="USER_ID" foreign-key="FK_BILLING_ADDRESS"/>
+        <component name="billingAddress" class="Address">
+             <property   name="street"
+                        type="string"
+                        column="STREET"
+                        length="150"/>
+            <property   name="zipcode"
+                        type="string"
+                        column="ZIPCODE"
+                        length="16"/>
+            <property   name="city"
+                        type="string"
+                        column="CITY"
+                        length="100"/>
+        </component>
+
+        <!-- Custom SQL! -->
+        <sql-insert>
+            insert into BILLING_ADDRESS
+                            (STREET, ZIPCODE, CITY, USER_ID)
+            values (?, ?, ?, ?)
+        </sql-insert>
+
+        <!-- Custom SQL (for Oracle only)!
+        <sql-update callable="true">
+            { call UPDATE_BILLING_ADDRESS(?, ?, ?, ?, ?) }
+        </sql-update>
+        -->
+    </join>       
+    
+    
+   </class>
+   </hibernate-mapping>

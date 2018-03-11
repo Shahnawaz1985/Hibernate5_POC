@@ -1,0 +1,103 @@
+<!DOCTYPE hibernate-configuration SYSTEM "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+
+        
+
+        <!-- Settings for a MySQL database.-->
+        <property name="dialect">org.hibernate.dialect.MySQL5Dialect</property>
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/Hibernate5?useSSL=false</property>
+        <property name="connection.username">developer</property>
+        <property name="connection.password">developer</property>
+        
+
+        
+
+        <!-- Use the Hibernate built-in pool for tests. -->
+        <property name="connection.pool_size">5</property>
+
+        <!-- Enable auto-commit mode for special cases (integration testing) -->
+        <property name="connection.autocommit">true</property>
+
+        <!-- Disable the second-level cache  -->
+       <property name="javax.cache.provider">org.ehcache.jsr107.EhcacheCachingProvider</property>
+       <property name="cache.region.factory_class">org.hibernate.cache.jcache.JCacheRegionFactory</property>
+        <property name="cache.use_query_cache">false</property>
+        <property name="cache.use_minimal_puts">false</property> 
+
+        <!-- In eager fetching, only join three tables deep if joins are used -->
+        <property name="max_fetch_depth">5</property>
+
+        <!-- Print SQL to stdout, format it nicely  -->
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+        <property name="use_sql_comments">true</property>
+
+        <!-- Drop and then re-create schema on SessionFactory build, for testing  -->
+        <property name="hbm2ddl.auto">update</property>
+
+        <!-- Use thread-bound persistence context propagation, scoped to the transaction -->
+        <property name="current_session_context_class">thread</property>
+        <property name="hibernate.enable_lazy_load_no_trans">true</property>
+
+        <!-- CaveatEmptor mapping files 
+        <mapping resource="auction/persistence/UserTypes.hbm.xml"/>
+        <mapping resource="auction/persistence/NamedQueries.hbm.xml"/>
+        <mapping resource="auction/persistence/DynamicFilters.hbm.xml"/>
+        <mapping resource="auction/persistence/audit/AuditLogRecord.hbm.xml"/>
+        <mapping resource="auction/model/User.hbm.xml"/>
+        <mapping resource="auction/model/BillingDetails.hbm.xml"/>
+        <mapping resource="auction/model/Item.hbm.xml"/>
+        <mapping resource="auction/model/Category.hbm.xml"/>
+        <mapping resource="auction/model/CategorizedItem.hbm.xml"/>
+        <mapping resource="auction/model/Bid.hbm.xml"/>
+        <mapping resource="auction/model/Comment.hbm.xml"/>
+        <mapping resource="auction/model/AddressEntity.hbm.xml"/>
+        <mapping resource="auction/model/Shipment.hbm.xml"/>
+        <mapping resource="auction/model/DynamicModel.hbm.xml"/>-->
+         <!-- <mapping resource="mappings/UserTypes.hbm.xml"/>
+        <mapping resource="mappings/SimpleUser.hbm.xml"/>
+        <mapping resource="mappings/AddressEntity.hbm.xml"/>
+        <mapping resource="mappings/BillingDetails.hbm.xml"/>
+        <mapping resource="mappings/Bid.hbm.xml"/>
+        <mapping resource="mappings/Item.hbm.xml"/>
+        <mapping resource="mappings/Category.hbm.xml"/>
+        <mapping resource="mappings/CategorizedItem.hbm.xml"/> -->
+       
+        
+        
+
+        <!-- CaveatEmptor annotated EJB3 entity beans.
+
+            Use this with the CaveatEmptor.JPA package if you don't want
+            persistence.xml but hibernate.cfg.xml. Startup with the SessionFactory
+            instead of the Persistence/EntityManagerFactory bootstrap.
+
+        <mapping package="auction.persistence"/>
+        <mapping class="auction.persistence.audit.AuditLogRecord"/>
+        <mapping class="auction.model.User"/>
+        <mapping class="auction.model.Item"/>
+        <mapping class="auction.model.Category"/>
+        <mapping class="auction.model.CategorizedItem"/>
+        <mapping class="auction.model.Bid"/>
+        <mapping class="auction.model.BillingDetails"/>
+        <mapping class="auction.model.CreditCard"/>
+        <mapping class="auction.model.BankAccount"/>
+        <mapping class="auction.model.Comment"/>
+        <mapping class="auction.model.AddressEntity"/>
+        <mapping class="auction.model.Shipment"/>
+        <mapping resource="auction/model/DynamicModel.hbm.xml"/>
+        -->
+        <mapping resource="mappings/UserTypes.hbm.xml"/>
+        <mapping resource="mappings/SimpleUser.hbm.xml"/>
+        <mapping resource="mappings/AddressEntity.hbm.xml"/>
+        <mapping resource="mappings/BillingDetails.hbm.xml"/>
+        <mapping resource="mappings/Bid.hbm.xml"/>
+        <mapping resource="mappings/Item.hbm.xml"/>
+        <mapping resource="mappings/Category.hbm.xml"/>
+        <mapping resource="mappings/CategorizedItem.hbm.xml"/>
+    </session-factory>
+
+</hibernate-configuration>
