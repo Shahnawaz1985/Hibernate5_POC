@@ -15,6 +15,7 @@ public class Hibrenate5Driver {
 				"dcd20e5d-2524-11e8-aafe-28d244a5b398", "402881ea6214fe61016214fe6d340000"};
 		List<SimpleUser> users = userDao.findMultipleUsers(userids);
 		System.out.println("Multiple users:"+users);
+		System.out.println("Multiple Users fetched.");
 	}
 
 }
